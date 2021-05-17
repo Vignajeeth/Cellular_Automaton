@@ -15,6 +15,9 @@ class Game_Of_Life:
 
 
 class Cell:
+
+    colour_map = {True: "BLACK", False: "WHITE"}
+
     def __init__(self, row_no, col_no, colour="WHITE", val=False) -> None:
         self.pos_x = int(row_no * gap_x)
         self.pos_y = int(col_no * gap_y)
@@ -85,7 +88,7 @@ class Matrix:
                         count += 1
 
                 if tile.colour == "BLACK":
-                    if count == 2 or count == 3:
+                    if count in [2, 3]:
                         newgrid.append("BLACK")
                     else:
                         newgrid.append("WHITE")
@@ -100,7 +103,7 @@ class Matrix:
 
 
 def driver():
-    run = None
+    run = False
     grid = Matrix()
 
     while True:
@@ -116,16 +119,15 @@ def driver():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 row, col = pos[0] // gap_y, pos[1] // gap_x
-                if grid.matrix[col][row].colour == "WHITE":
-                    grid.matrix[col][row].colour = "BLACK"
-
-                elif grid.matrix[col][row].colour == "BLACK":
-                    grid.matrix[col][row].colour = "WHITE"
+                grid.matrix[col][row].val = not grid.matrix[col][row].val
+                grid.matrix[col][row].colour = grid.matrix[col][row].colour_map[
+                    grid.matrix[col][row].val
+                ]
 
             while run:
                 pygame.time.wait(250)
                 for event in pygame.event.get():
-                    if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                         run = False
 
                 newcolours = grid.update_grid()
@@ -135,8 +137,6 @@ def driver():
                         grid.matrix[i][j].colour = newcolours[count]
                         count += 1
                 grid.update_display(WIN)
-                # run= False
-
             grid.update_display(WIN)
 
 
