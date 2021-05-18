@@ -1,6 +1,8 @@
 import pygame
 import sys
-import numpy as np
+import scipy.signal as sp
+
+# TODO Clean Code up
 
 
 class Cell:
@@ -22,7 +24,7 @@ class Cell:
 
 
 class Matrix:
-    def __init__(self, height=800, width=800, rows=80, columns=80) -> None:
+    def __init__(self, height=800, width=800, rows=40, columns=40) -> None:
         self.height, self.width = height, width
         self.total_rows, self.total_columns = rows, columns
         self.gap_x, self.gap_y = (
@@ -47,7 +49,7 @@ class Matrix:
 
     def manual_update(self, pos):
         """
-        Used when updated with a mouse.. or lets see.
+        Used when updated with a mouse.
         """
         color_map = {True: "BLACK", False: "WHITE"}
         x = pos[0] // self.gap_x
@@ -69,27 +71,70 @@ class Matrix:
         """
         birth = [int(i) for i in birth]
         survival = [int(i) for i in survival]
+        filter = [[1, 1, 1], [1, 0, 1], [1, 1, 1]]
         curr_matrix, next_matrix = (
             (self.even_matrix, self.odd_matrix)
             if self.even
             else (self.odd_matrix, self.even_matrix)
         )
-        for i in range(1, self.total_rows - 1):
-            for j in range(1, self.total_columns - 1):
+        neighbour_matrix = sp.correlate2d(
+            curr_matrix, filter, mode="same", boundary="wrap"
+        )
+        for i in range(self.total_rows):
+            for j in range(self.total_columns):
                 # neighbours = (
                 #     np.sum(curr_matrix[i - 1 : i + 2][j - 1 : j + 2])
                 #     - curr_matrix[i][j]
                 # )
-                neighbours = (
-                    curr_matrix[i - 1][j - 1]
-                    + curr_matrix[i][j - 1]
-                    + curr_matrix[i + 1][j - 1]
-                    + curr_matrix[i - 1][j]
-                    + curr_matrix[i + 1][j]
-                    + curr_matrix[i - 1][j + 1]
-                    + curr_matrix[i][j + 1]
-                    + curr_matrix[i + 1][j + 1]
-                )
+
+                # if i == self.total_rows - 1 and j == self.total_columns - 1:
+                #     neighbours = (
+                #         curr_matrix[i - 1][j - 1]
+                #         + curr_matrix[i][j - 1]
+                #         + curr_matrix[i - 1][j]
+                #         + curr_matrix[i][0]
+                #         + curr_matrix[i - 1][0]
+                #         + curr_matrix[0][j]
+                #         + curr_matrix[0][j - 1]
+                #         + curr_matrix[0][0]
+                #     )
+                # elif i == self.total_rows - 1:
+                #     neighbours = (
+                #         curr_matrix[i - 1][j - 1]
+                #         + curr_matrix[i][j - 1]
+                #         + curr_matrix[0][j - 1]
+                #         + curr_matrix[i - 1][j]
+                #         + curr_matrix[0][j]
+                #         + curr_matrix[i - 1][j + 1]
+                #         + curr_matrix[i][j + 1]
+                #         + curr_matrix[0][j + 1]
+                #     )
+
+                # elif j == self.total_columns - 1:
+                #     neighbours = (
+                #         curr_matrix[i - 1][j - 1]
+                #         + curr_matrix[i][j - 1]
+                #         + curr_matrix[i + 1][j - 1]
+                #         + curr_matrix[i - 1][j]
+                #         + curr_matrix[i + 1][j]
+                #         + curr_matrix[i - 1][0]
+                #         + curr_matrix[i][0]
+                #         + curr_matrix[i + 1][0]
+                #     )
+
+                # else:
+                #     neighbours = (
+                #         curr_matrix[i - 1][j - 1]
+                #         + curr_matrix[i][j - 1]
+                #         + curr_matrix[i + 1][j - 1]
+                #         + curr_matrix[i - 1][j]
+                #         + curr_matrix[i + 1][j]
+                #         + curr_matrix[i - 1][j + 1]
+                #         + curr_matrix[i][j + 1]
+                #         + curr_matrix[i + 1][j + 1]
+                #     )
+                neighbours = neighbour_matrix[i][j]
+
                 if neighbours in birth:
                     # print("Birth", neighbours)
                     next_matrix[i][j] = True
@@ -110,7 +155,6 @@ class Matrix:
                         (j * self.gap_x, i * self.gap_y, self.gap_x, self.gap_y),
                     )
         self.even = not self.even
-        # TODO Finish the other boundary conditions
         for i in range(self.total_columns):
             gap = i * self.gap_x
             pygame.draw.line(self.WIN, "BLACK", (gap, 0), (gap, self.height))
@@ -129,7 +173,22 @@ class Matrix:
 
 
 class Cellular_Automation_Model:
-    def __init__(self, birth="2", survival=""):
+    """
+    Moore Rules:
+    B3/S23         Game of Life
+    B2/S           Seed
+    B36/S23        High Life
+    B3678/S34678   Day and Night
+    B35678/S5678   Diamoeba
+    B234/S         Persian Rug
+    B345/S5        Long Life
+
+    """
+
+    def __init__(self, birth="3", survival="23"):
+        # TODO Add von Neumann rules.
+        # TODO Add Generation Count
+        # TODO Add Population Count
         self.birth = list(birth)
         self.survival = list(survival)
         self.model_name = "B" + birth + "/S" + survival
@@ -139,6 +198,9 @@ class Cellular_Automation_Model:
         pygame.display.set_caption("Cellular Automata Model " + self.model_name)
 
     def driver(self):
+        """
+        Driver Code for the program.
+        """
         run = False
 
         while True:
@@ -172,9 +234,12 @@ class Cellular_Automation_Model:
 
 
 if __name__ == "__main__":
-    # Click to Toggle Cells.
-    # Spacebar for start/stop.
-    # q for Quitting.
+    """
+    Click to Toggle Cells.
+    Spacebar for start/stop.
+    q for Quitting.
+    """
+
     m = Cellular_Automation_Model()
     # m.grid.manual_update((180, 100))
     # m.grid.manual_update((180, 200))
