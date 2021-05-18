@@ -1,18 +1,11 @@
 import pygame
 import sys
+import numpy as np
 
-
-# Move Later
-height, width = 800, 800
-tot_rows, tot_columns = 20, 20
-gap_x, gap_y = width // tot_columns, height // tot_rows
+height, width = 500, 500
 WIN = pygame.display.set_mode((height, width))
-delta_time = 125
-
-
-class Game_Of_Life:
-    def __init__(self):
-        pass
+tot_rows, tot_columns = 20, 20
+gap_x, gap_y = (width // tot_columns, height // tot_rows)
 
 
 class Cell:
@@ -38,8 +31,15 @@ class Cell:
 
 
 class Matrix:
-    def __init__(self) -> None:
+    def __init__(self, height=500, width=500) -> None:
         self.matrix = self.create_matrix()
+        self.height, self.width = height, width
+        self.tot_rows, self.tot_columns = 20, 20
+
+        self.gap_x, self.gap_y = (
+            self.width // self.tot_columns,
+            self.height // self.tot_rows,
+        )
 
     def create_matrix(self):
         grid = [[Cell(j, i) for j in range(tot_columns)] for i in range(tot_rows)]
@@ -47,10 +47,14 @@ class Matrix:
 
     def draw_matrix(self, win):
         # gap = width // ROWS
-        for i in range(tot_rows):
-            pygame.draw.line(win, "BLACK", (0, i * gap_y), (width, i * gap_y))
-            for j in range(tot_columns):
-                pygame.draw.line(win, "BLACK", (j * gap_x, 0), (j * gap_x, width))
+        for i in range(self.tot_rows):
+            pygame.draw.line(
+                win, "BLACK", (0, i * self.gap_y), (self.width, i * self.gap_y)
+            )
+            for j in range(self.tot_columns):
+                pygame.draw.line(
+                    win, "BLACK", (j * self.gap_x, 0), (j * self.gap_x, self.width)
+                )
 
     def update_display(self, win):
         for row in self.matrix:
@@ -59,8 +63,9 @@ class Matrix:
         self.draw_matrix(win)
         pygame.display.update()
 
+    # Change here
     def neighbour(self, tile):
-        col, row = tile.pos_x // gap_x, tile.pos_y // gap_y
+        col, row = tile.pos_x // self.gap_x, tile.pos_y // self.gap_y
         neighbours = [
             [row - 1, col - 1],
             [row - 1, col],
@@ -74,11 +79,14 @@ class Matrix:
         actual = []
         for i in neighbours:
             row, col = i
-            if 0 <= row <= (tot_rows - 1) and 0 <= col <= (tot_columns - 1):
+            if 0 <= row <= (self.tot_rows - 1) and 0 <= col <= (self.tot_columns - 1):
                 actual.append(i)
         return actual
 
-    def update_grid(self):
+    # Change here
+    def update_grid(self, birth, survival):
+        birth = [int(i) for i in birth]
+        survival = [int(i) for i in survival]
         newgrid = []
         for row in self.matrix:
             for tile in row:
@@ -90,13 +98,13 @@ class Matrix:
                         count += 1
 
                 if tile.color == "BLACK":
-                    if count in [2, 3]:
+                    if count in survival:
                         newgrid.append("BLACK")
                     else:
                         newgrid.append("WHITE")
 
                 else:
-                    if count == 3:
+                    if count in birth:
                         newgrid.append("BLACK")
                     else:
                         newgrid.append("WHITE")
@@ -112,49 +120,63 @@ class Matrix:
         return result
 
 
-def driver():
-    run = False
-    grid = Matrix()
+class Cellular_Automation_Model:
+    def __init__(self, birth="2", survival=""):
+        self.birth = list(birth)
+        self.survival = list(survival)
+        self.model_name = "B" + birth + "/S" + survival
+        self.grid = Matrix()
+        self.delta_time = 250
 
-    while True:
-        pygame.time.delay(delta_time)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT or (
-                event.type == pygame.KEYDOWN and event.key == pygame.K_q
-            ):
-                pygame.quit()
-                sys.exit()
+        pygame.display.set_caption("Cellular Automata Model " + self.model_name)
 
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                run = True
+    def driver(self):
+        run = False
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos()
-                row, col = pos[0] // gap_y, pos[1] // gap_x
-                grid.matrix[col][row].val = not grid.matrix[col][row].val
-                grid.matrix[col][row].color = grid.matrix[col][row].color_map[
-                    grid.matrix[col][row].val
-                ]
+        while True:
+            pygame.time.delay(self.delta_time)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT or (
+                    event.type == pygame.KEYDOWN and event.key == pygame.K_q
+                ):
+                    pygame.quit()
+                    sys.exit()
 
-            while run:
-                pygame.time.wait(delta_time)
-                for event in pygame.event.get():
-                    if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                        run = False
-                        # print(grid)
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                    run = True
+                    pygame.display.set_caption(
+                        "Cellular Automata Model " + self.model_name
+                    )
 
-                newcolors = grid.update_grid()
-                count = 0
-                for i in range(len(grid.matrix)):
-                    for j in range(len(grid.matrix[0])):
-                        grid.matrix[i][j].color = newcolors[count]
-                        count += 1
-                grid.update_display(WIN)
-            grid.update_display(WIN)
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    pos = pygame.mouse.get_pos()
+                    col, row = pos[0] // gap_x, pos[1] // gap_y
+                    self.grid.matrix[row][col].val = not self.grid.matrix[row][col].val
+                    self.grid.matrix[row][col].color = self.grid.matrix[row][
+                        col
+                    ].color_map[self.grid.matrix[row][col].val]
+
+                while run:
+                    pygame.time.wait(self.delta_time)
+                    for event in pygame.event.get():
+                        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                            run = False
+                            pygame.display.set_caption("Paused")
+                            # print(grid)
+                    # Change here
+                    newcolors = self.grid.update_grid(self.birth, self.survival)
+                    count = 0
+                    for i in range(len(self.grid.matrix)):
+                        for j in range(len(self.grid.matrix[0])):
+                            self.grid.matrix[i][j].color = newcolors[count]
+                            count += 1
+                    self.grid.update_display(WIN)
+                self.grid.update_display(WIN)
 
 
 if __name__ == "__main__":
     # Click to Toggle Cells.
     # Spacebar for start/stop.
     # q for Quitting.
-    driver()
+    m = Cellular_Automation_Model()
+    m.driver()
