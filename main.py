@@ -8,6 +8,13 @@ if __name__ == "__main__":
     q for Quitting.
     """
     models = {
+        "Replicator": ("1357", "1357"),
+        "Photon/XOR": ("25", "4"),
+        "Life without Death": ("3", "012345678"),
+        "34 Life": ("34", "34"),
+        "2x2": ("36", "125"),
+        "Morley": ("368", "245"),
+        "Anneal": ("4678", "35678"),
         "Game of Life": ("3", "23"),
         "Seed": ("2", ""),
         "High Life": ("36", "23"),
@@ -17,7 +24,7 @@ if __name__ == "__main__":
         "Long Life": ("345", "5"),
     }
 
-    m = Cellular_Automation_Model(models["Diamoeba"])
+    m = Cellular_Automation_Model(models["Photon/XOR"])
 
     # m.grid.manual_update((180, 100))
     # m.grid.manual_update((180, 200))

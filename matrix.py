@@ -108,7 +108,9 @@ class Matrix:
                         (j * self.gap_x, i * self.gap_y, self.gap_x, self.gap_y),
                     )
         self.even = not self.even
+        self.draw_lines()
 
+    def draw_lines(self):
         """Draw lines after every update."""
         for i in range(self.total_columns):
             gap = i * self.gap_x
