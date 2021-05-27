@@ -1,4 +1,4 @@
-from model import Cellular_Automation_Model
+from model import Cellular_Automaton_Model
 
 
 if __name__ == "__main__":
@@ -24,7 +24,7 @@ if __name__ == "__main__":
         "Long Life": ("345", "5"),
     }
 
-    m = Cellular_Automation_Model(models["Photon/XOR"])
+    m = Cellular_Automaton_Model(models["Photon/XOR"])
 
     # m.grid.manual_update((180, 100))
     # m.grid.manual_update((180, 200))

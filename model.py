@@ -3,7 +3,7 @@ import sys
 from matrix import Matrix
 
 
-class Cellular_Automation_Model:
+class Cellular_Automaton_Model:
     """
     Moore Rules:
     3/23         Game of Life
