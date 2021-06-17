@@ -24,7 +24,7 @@ if __name__ == "__main__":
         "Long Life": ("345", "5"),
     }
 
-    m = Cellular_Automaton_Model(models["Photon/XOR"])
+    m = Cellular_Automaton_Model(models["Game of Life"])
 
     # m.grid.manual_update((180, 100))
     # m.grid.manual_update((180, 200))
@@ -34,5 +34,5 @@ if __name__ == "__main__":
     # m.grid.odd_matrix
 
     # m.grid.increment_time_step("3", "23")
-
+    m.Gosper_Glider_Gun()
     m.driver()

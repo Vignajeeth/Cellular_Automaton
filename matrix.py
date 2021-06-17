@@ -4,16 +4,23 @@ import numpy as np
 from cell import Cell
 
 
+class Color:
+    FOREGROUND = "BLACK"  # (255, 0, 0)
+    BACKGROUND = "WHITE"  # (80, 206, 250)
+    LINES = "BLACK"
+
+
 class Matrix:
     """
     Performs all the operations related to matrix manipulation.
     """
 
-    def __init__(self, height=800, width=800, rows=40, columns=40) -> None:
+    def __init__(self, height=1000, width=1000, rows=50, columns=50) -> None:
         """
         Initialises dimensions, grid, filters and surface to draw.
         """
         """Editable"""
+        self.qwe = 0
         self.height, self.width = height, width
         self.total_rows, self.total_columns = rows, columns
         self.gap_x, self.gap_y = (
@@ -29,15 +36,15 @@ class Matrix:
 
         """Display"""
         self.surface = pygame.display.set_mode((height, width))
-        pygame.draw.rect(self.surface, "WHITE", (0, 0, height, width))
+        pygame.draw.rect(self.surface, Color.BACKGROUND, (0, 0, height, width))
 
         """Horizontal and vertical lines"""
-        for i in range(columns):
-            gap = i * self.gap_x
-            pygame.draw.line(self.surface, "BLACK", (gap, 0), (gap, height))
-        for i in range(rows):
-            gap = i * self.gap_y
-            pygame.draw.line(self.surface, "BLACK", (0, gap), (width, gap))
+        # for i in range(columns):
+        #     gap = i * self.gap_x
+        #     pygame.draw.line(self.surface, Color.LINES, (gap, 0), (gap, height))
+        # for i in range(rows):
+        #     gap = i * self.gap_y
+        #     pygame.draw.line(self.surface, Color.LINES, (0, gap), (width, gap))
         pygame.display.update()
         # pygame.draw.line(surface, "BLACK", (100, 0), (200, 200))
 
@@ -51,7 +58,7 @@ class Matrix:
         """
         Used when updated with a mouse. Changes Boolean in matrix and draws Rect.
         """
-        color_map = {True: "BLACK", False: "WHITE"}
+        color_map = {True: Color.FOREGROUND, False: Color.BACKGROUND}
         x = pos[0] // self.gap_x
         y = pos[1] // self.gap_y
 
@@ -70,6 +77,8 @@ class Matrix:
         Increments the generation and repopulates the matrix.
         Has 2 matrices which serve as the previous state for each other.
         """
+        if self.qwe == 0:
+            pygame.image.save_extended(self.surface, "img/ca" + str(self.qwe) + ".png")
         birth = [int(i) for i in birth]
         survival = [int(i) for i in survival]
 
@@ -93,7 +102,7 @@ class Matrix:
                     next_matrix[i][j] = True
                     pygame.draw.rect(
                         self.surface,
-                        "BLACK",
+                        Color.FOREGROUND,
                         (j * self.gap_x, i * self.gap_y, self.gap_x, self.gap_y),
                     )
                 elif neighbours in survival:
@@ -104,20 +113,22 @@ class Matrix:
                     # print("Rest", neighbours)
                     pygame.draw.rect(
                         self.surface,
-                        "WHITE",
+                        Color.BACKGROUND,
                         (j * self.gap_x, i * self.gap_y, self.gap_x, self.gap_y),
                     )
         self.even = not self.even
-        self.draw_lines()
+        # self.draw_lines()
+        self.qwe += 1
+        pygame.image.save_extended(self.surface, "img/ca" + str(self.qwe) + ".png")
 
     def draw_lines(self):
         """Draw lines after every update."""
         for i in range(self.total_columns):
             gap = i * self.gap_x
-            pygame.draw.line(self.surface, "BLACK", (gap, 0), (gap, self.height))
+            # pygame.draw.line(self.surface, Color.LINES, (gap, 0), (gap, self.height))
         for i in range(self.total_rows):
             gap = i * self.gap_y
-            pygame.draw.line(self.surface, "BLACK", (0, gap), (self.width, gap))
+            # pygame.draw.line(self.surface, Color.LINES, (0, gap), (self.width, gap))
         pygame.display.update()
 
     def __repr__(self) -> str:
