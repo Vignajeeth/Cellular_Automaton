@@ -17,7 +17,9 @@ class Cellular_Automaton_Model:
         self.grid = Matrix()
         self.generation = 0
 
-        pygame.display.set_caption("Cellular Automata Model " + self.model_name)
+        pygame.display.set_caption(
+            "Cellular Automata Model " + self.model_name
+        )
 
     def driver(self):
         """
@@ -34,7 +36,10 @@ class Cellular_Automaton_Model:
                     pygame.quit()
                     sys.exit()
 
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                if (
+                    event.type == pygame.KEYDOWN
+                    and event.key == pygame.K_SPACE
+                ):
                     run = True
                     pygame.display.set_caption(
                         "Cellular Automata Model " + self.model_name
@@ -48,7 +53,10 @@ class Cellular_Automaton_Model:
                 while run:
                     pygame.time.wait(self.delta_time)
                     for event in pygame.event.get():
-                        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                        if (
+                            event.type == pygame.KEYDOWN
+                            and event.key == pygame.K_SPACE
+                        ):
                             run = False
                             pygame.display.set_caption(
                                 f"Paused: Generation = {self.generation} | "
@@ -64,39 +72,44 @@ class Cellular_Automaton_Model:
         """
         shift_down = 60
         shift_right = 140
-        self.grid.manual_update((31 + shift_right, 412 + shift_down))
-        self.grid.manual_update((55 + shift_right, 411 + shift_down))
-        self.grid.manual_update((56 + shift_right, 431 + shift_down))
-        self.grid.manual_update((33 + shift_right, 432 + shift_down))
-        self.grid.manual_update((227 + shift_right, 410 + shift_down))
-        self.grid.manual_update((253 + shift_right, 389 + shift_down))
-        self.grid.manual_update((273 + shift_right, 371 + shift_down))
-        self.grid.manual_update((292 + shift_right, 371 + shift_down))
-        self.grid.manual_update((234 + shift_right, 430 + shift_down))
-        self.grid.manual_update((231 + shift_right, 452 + shift_down))
-        self.grid.manual_update((249 + shift_right, 471 + shift_down))
-        self.grid.manual_update((270 + shift_right, 488 + shift_down))
-        self.grid.manual_update((288 + shift_right, 489 + shift_down))
-        self.grid.manual_update((331 + shift_right, 392 + shift_down))
-        self.grid.manual_update((349 + shift_right, 409 + shift_down))
-        self.grid.manual_update((351 + shift_right, 428 + shift_down))
-        self.grid.manual_update((374 + shift_right, 429 + shift_down))
-        self.grid.manual_update((354 + shift_right, 446 + shift_down))
-        self.grid.manual_update((336 + shift_right, 475 + shift_down))
-        self.grid.manual_update((314 + shift_right, 429 + shift_down))
-        self.grid.manual_update((430 + shift_right, 412 + shift_down))
-        self.grid.manual_update((451 + shift_right, 412 + shift_down))
-        self.grid.manual_update((452 + shift_right, 391 + shift_down))
-        self.grid.manual_update((431 + shift_right, 388 + shift_down))
-        self.grid.manual_update((433 + shift_right, 366 + shift_down))
-        self.grid.manual_update((451 + shift_right, 369 + shift_down))
-        self.grid.manual_update((473 + shift_right, 348 + shift_down))
-        self.grid.manual_update((469 + shift_right, 432 + shift_down))
-        self.grid.manual_update((514 + shift_right, 331 + shift_down))
-        self.grid.manual_update((511 + shift_right, 354 + shift_down))
-        self.grid.manual_update((507 + shift_right, 428 + shift_down))
-        self.grid.manual_update((508 + shift_right, 449 + shift_down))
-        self.grid.manual_update((704 + shift_right, 372 + shift_down))
-        self.grid.manual_update((732 + shift_right, 373 + shift_down))
-        self.grid.manual_update((734 + shift_right, 385 + shift_down))
-        self.grid.manual_update((716 + shift_right, 388 + shift_down))
+        glider_gun_coordinates = [
+            (31, 412),
+            (55, 411),
+            (56, 431),
+            (33, 432),
+            (227, 410),
+            (253, 389),
+            (273, 371),
+            (292, 371),
+            (234, 430),
+            (231, 452),
+            (249, 471),
+            (270, 488),
+            (288, 489),
+            (331, 392),
+            (349, 409),
+            (351, 428),
+            (374, 429),
+            (354, 446),
+            (336, 475),
+            (314, 429),
+            (430, 412),
+            (451, 412),
+            (452, 391),
+            (431, 388),
+            (433, 366),
+            (451, 369),
+            (473, 348),
+            (469, 432),
+            (514, 331),
+            (511, 354),
+            (507, 428),
+            (508, 449),
+            (704, 372),
+            (732, 373),
+            (734, 385),
+            (716, 388),
+        ]
+
+        for a, b in glider_gun_coordinates:
+            self.grid.manual_update((a + shift_right, b + shift_down))

@@ -27,8 +27,12 @@ class Matrix:
             self.height // self.total_rows,
         )
         """Non Editable"""
-        self.even_matrix = [[False for j in range(columns)] for i in range(rows)]
-        self.odd_matrix = [[False for j in range(columns)] for i in range(rows)]
+        self.even_matrix = [
+            [False for j in range(columns)] for i in range(rows)
+        ]
+        self.odd_matrix = [
+            [False for j in range(columns)] for i in range(rows)
+        ]
         self.even = True
         self.moore_filter = [[1, 1, 1], [1, 0, 1], [1, 1, 1]]
         self.von_neumann_filter = [[0, 1, 0], [1, 0, 1], [0, 1, 0]]
@@ -40,7 +44,9 @@ class Matrix:
         """Horizontal and vertical lines"""
         for i in range(columns):
             gap = i * self.gap_x
-            pygame.draw.line(self.surface, Color.LINES, (gap, 0), (gap, height))
+            pygame.draw.line(
+                self.surface, Color.LINES, (gap, 0), (gap, height)
+            )
         for i in range(rows):
             gap = i * self.gap_y
             pygame.draw.line(self.surface, Color.LINES, (0, gap), (width, gap))
@@ -51,7 +57,9 @@ class Matrix:
         """
         Returns the population of the world at the given generation.
         """
-        return np.sum(self.even_matrix if generation % 2 == 0 else self.odd_matrix)
+        return np.sum(
+            self.even_matrix if generation % 2 == 0 else self.odd_matrix
+        )
 
     def manual_update(self, pos):
         """
@@ -100,7 +108,12 @@ class Matrix:
                     pygame.draw.rect(
                         self.surface,
                         Color.FOREGROUND,
-                        (j * self.gap_x, i * self.gap_y, self.gap_x, self.gap_y),
+                        (
+                            j * self.gap_x,
+                            i * self.gap_y,
+                            self.gap_x,
+                            self.gap_y,
+                        ),
                     )
                 elif neighbours in survival:
                     # print("Survival", neighbours)
@@ -111,7 +124,12 @@ class Matrix:
                     pygame.draw.rect(
                         self.surface,
                         Color.BACKGROUND,
-                        (j * self.gap_x, i * self.gap_y, self.gap_x, self.gap_y),
+                        (
+                            j * self.gap_x,
+                            i * self.gap_y,
+                            self.gap_x,
+                            self.gap_y,
+                        ),
                     )
         self.even = not self.even
         self.draw_lines()
@@ -120,10 +138,14 @@ class Matrix:
         """Draw lines after every update."""
         for i in range(self.total_columns):
             gap = i * self.gap_x
-            pygame.draw.line(self.surface, Color.LINES, (gap, 0), (gap, self.height))
+            pygame.draw.line(
+                self.surface, Color.LINES, (gap, 0), (gap, self.height)
+            )
         for i in range(self.total_rows):
             gap = i * self.gap_y
-            pygame.draw.line(self.surface, Color.LINES, (0, gap), (self.width, gap))
+            pygame.draw.line(
+                self.surface, Color.LINES, (0, gap), (self.width, gap)
+            )
         pygame.display.update()
 
     def __repr__(self) -> str:

@@ -26,13 +26,4 @@ if __name__ == "__main__":
 
     m = Cellular_Automaton_Model(models["Game of Life"], time=10)
 
-    # m.grid.manual_update((180, 100))
-    # m.grid.manual_update((180, 200))
-    # m.grid.manual_update((180, 300))
-
-    # m.grid.even_matrix
-    # m.grid.odd_matrix
-
-    # m.grid.increment_time_step("3", "23")
-    # m.Gosper_Glider_Gun()
     m.driver()
